@@ -27,9 +27,9 @@ Sample output for the mapreduce job: (IP IP, average duration of sesssion, longe
  1.186.108.230	1.186.108.230,1,0 min 18 sec,18815,[0](Wed Jul 22 16:11:27 UTC 2015 Wed Jul 22 16:11:46 UTC 2015 4)
 
  Sample output for the Pig script: (Top 50 userIps sorted by longest session(most enganged users))
+ 
   (52.74.219.71,559207)
-  
-  
+ 
   (106.186.23.95,559119)
   
   (119.81.61.166,558236)
