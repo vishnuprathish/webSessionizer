@@ -8,6 +8,12 @@ tar -xvf 2015_07_22_mktplace_shop_web_log_sample.log.gz
 chmod +x ./start.sh
 ./start.sh /2015_07_22_mktplace_shop_web_log_sample.log /outputpath
 
+Aboout Code: 
+A mapreduce job aggregates data per user which collects all the relevent metrics by user engagement. 
+User engagement is calcuated through a pig script which operates on the output of the mapred job. 
+
+Test case only covers sessionization logic
+
 Sample output for the mapreduce job: (IP IP, average duration of sesssion, longest session in millis, sessions array)
 
  1.186.101.79	1.186.101.79,3,0 min 59 sec,146934,[0](Wed Jul 22 10:45:55 UTC 2015 Wed Jul 22 10:48:22 UTC 2015 9) [1](Wed Jul 22 11:00:44 UTC 2015 Wed Jul 22 11:01:15 UTC 2015 7) [2](Wed Jul 22 11:04:32 UTC 2015 Wed Jul 22 11:04:33 UTC 2015 3)
