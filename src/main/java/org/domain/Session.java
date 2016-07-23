@@ -1,7 +1,5 @@
 package org.domain;
 
-import org.apache.commons.net.ntp.TimeStamp;
-
 import java.util.Date;
 
 /**
@@ -11,11 +9,13 @@ public class Session {
     private Long visitStart;
     private Long visitEnd;
     private Long duration;
+    private Integer uniqueUrlCount;
 
-    public Session(Long visitStart, Long visitEnd) {
+    public Session(Long visitStart, Long visitEnd, Integer uniqueUrlCount) {
         this.visitStart = visitStart;
         this.visitEnd = visitEnd;
         duration = visitEnd - visitStart;
+        this.uniqueUrlCount = uniqueUrlCount;
     }
 
     public Long getVisitStart() {
@@ -38,10 +38,18 @@ public class Session {
         return duration;
     }
 
+    public Integer getUniqueUrlCount() {
+        return uniqueUrlCount;
+    }
+
+    public void setUniqueUrlCount(Integer uniqueUrlCount) {
+        this.uniqueUrlCount = uniqueUrlCount;
+    }
+
     @Override
     public String toString() {
         return "(" + new Date(visitStart) +
-                " - " + new Date(visitEnd) +
-                ")";
+                " - " + new Date(visitEnd) + ")" +
+                " Url Count: " + uniqueUrlCount;
     }
 }

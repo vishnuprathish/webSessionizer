@@ -1,13 +1,13 @@
 package org.reducer;
 
 import org.domain.Session;
+import org.domain.SessionVisit;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class SessionizerTest {
 
-    JobReducer reducer = new JobReducer();
+    SessionReducer sessionReducer = new SessionReducer();
     private static Long INTERVAL = 600000l; //ten minutes in millis
 
     private Long getTimeStamp(String timeStamp) throws Exception {
@@ -25,6 +25,8 @@ public class SessionizerTest {
 
     @Test
     public void test() {
+
+        Integer URL_HASH1 = 1;
 
         String[] timeStamps = {
                 "2015-07-22T09:00:28.348141Z",
@@ -37,30 +39,37 @@ public class SessionizerTest {
                 "2015-07-22T09:25:49.348141Z",
         };
 
-        List<Long> sortedTimestamps = new ArrayList<Long>();
+        List<SessionVisit> visits = new ArrayList<SessionVisit>();
 
         for(String timeStamp : timeStamps) {
             try {
-                sortedTimestamps.add(getTimeStamp(timeStamp));
+                SessionVisit sessionVisit = new SessionVisit(URL_HASH1, getTimeStamp(timeStamp));
+                visits.add(sessionVisit);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        List<Session> sessions = reducer.sessionize(sortedTimestamps, INTERVAL);
+        List<Session> sessions = sessionReducer.convertToSessions(visits, INTERVAL);
         Assert.assertEquals(3, sessions.size());
 
     }
 
 
     /**
-     *     Contains unsorted timestamps. A sort is performed before sessionizing.
+     *     Contains unsorted timestamps. A sort is performed internally.
      *     Should still contain 3 sessions as dataset is basically same with
      *     duplicates
       */
 
     @Test
     public void testUnsorted() {
+
+        Integer URL_HASH1 = 1;
+        Integer URL_HASH3 = 3;
+        List<Integer> urlhashs = new ArrayList<Integer>();
+        urlhashs.add(URL_HASH1);
+        urlhashs.add(URL_HASH3);
 
         String[] timeStamps = {
                 "2015-07-22T09:01:28.348141Z",
@@ -77,24 +86,23 @@ public class SessionizerTest {
                 "2015-07-22T09:25:47.348141Z",
                 "2015-07-22T09:11:30.348141Z",
                 "2015-07-22T09:11:30.348141Z",
-
         };
 
-        List<Long> timestamps = new ArrayList<Long>();
+        List<SessionVisit> visitsUnsorted = new ArrayList<SessionVisit>();
 
+        int i =0;
         for(String timeStamp : timeStamps) {
+            i++;
             try {
-                timestamps.add(getTimeStamp(timeStamp));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                SessionVisit sessionVisit = new SessionVisit(urlhashs.get(i % 2), getTimeStamp(timeStamp));
+                visitsUnsorted.add(sessionVisit);
+            } catch (Exception e) { e.printStackTrace(); }
         }
 
-        // Sort before sessionizing
-        Collections.sort(timestamps);
-
-        List<Session> sessions = reducer.sessionize(timestamps, INTERVAL);
+        List<Session> sessions = sessionReducer.convertToSessions(visitsUnsorted, INTERVAL);
         Assert.assertEquals(3, sessions.size());
+        Integer TWO = 2;
+        Assert.assertEquals(sessions.get(0).getUniqueUrlCount(), TWO);
 
     }
 }

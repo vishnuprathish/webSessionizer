@@ -2,6 +2,7 @@ package org.domain;
 
 import org.apache.hadoop.io.Text;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,8 +11,9 @@ import java.util.List;
 public class UserSessionProfile {
     private String ipAddr;
     private List<Session> sessions;
-    private Integer uniqueVisits;
+    private Integer sessionCount;
     private Long avgSessionTime;
+    private Long longestDuration;  // Largest session with at least N user interactions
 
     public String getIpAddr() {
         return ipAddr;
@@ -27,14 +29,23 @@ public class UserSessionProfile {
 
     public void setSessions(List<Session> sessions) {
         this.sessions = sessions;
+        this.sessionCount = sessions.size();
     }
 
-    public Integer getUniqueVisits() {
-        return uniqueVisits;
+    public Long getLongestDuration() {
+        return longestDuration;
     }
 
-    public void setUniqueVisits(Integer uniqueVisits) {
-        this.uniqueVisits = uniqueVisits;
+    public void setLongestDuration(Long longestDuration) {
+        this.longestDuration = longestDuration;
+    }
+
+    public Integer getSessionCount() {
+        return sessionCount;
+    }
+
+    public void setSessionCount(Integer sessionCount) {
+        this.sessionCount = sessionCount;
     }
 
     public Long getAvgSessionTime() {
@@ -45,13 +56,33 @@ public class UserSessionProfile {
         this.avgSessionTime = avgSessionTime;
     }
 
+    // To be used for pretty print
     public Text print() {
-        return new Text("{" +
-                "User IP:'" + ipAddr + '\'' +
-                ", sessions :" + sessions +
-                ", Total Unique Visits :'" + uniqueVisits + '\'' +
-                ", Average Session Time :" + avgSessionTime / 60 + " min " + avgSessionTime % 60 + " sec" +
+        return new Text (
+                "UserSessionProfile{" +
+                "ipAddr='" + ipAddr + '\'' +
+                ", sessions=" + sessions +
+                ", sessionCount=" + sessionCount +
+                ", avgSessionTime=" + avgSessionTime / 60000 + " min " + (avgSessionTime / 1000) % 60 + " sec" +
                 '}');
     }
 
+    public String printCSV() {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (Session session: sessions) {
+          sb.append("[")
+                .append(i)
+                .append("]")
+                .append("(")
+                .append(new Date(session.getVisitStart()))
+                .append(" ")
+                .append(new Date(session.getVisitEnd()))
+                .append(" ")
+                .append(session.getUniqueUrlCount())
+                .append(") ");
+            i++;
+        }
+        return ipAddr +","+ sessionCount +","+ avgSessionTime / 60000 + " min " + (avgSessionTime / 1000) % 60 + " sec" +","+ longestDuration +","+ sb.toString();
+    }
 }

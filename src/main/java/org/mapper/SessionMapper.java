@@ -1,12 +1,11 @@
 package org.mapper;
 
-
-import org.domain.SessionVisitWritable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.domain.SessionVisitWritable;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.Calendar;
 /**
  * Created by vishnu.prathish on 7/16/2016.
  */
-public class JobMapper extends Mapper<LongWritable, Text, Text, SessionVisitWritable> {
+public class SessionMapper extends org.apache.hadoop.mapreduce.Mapper<LongWritable, Text, Text, SessionVisitWritable> {
 
     /**
      * Obtains userIp from logline
@@ -54,14 +53,14 @@ public class JobMapper extends Mapper<LongWritable, Text, Text, SessionVisitWrit
             String[] tokens = logLine.split(" ");
             try {
 
-                SessionVisitWritable sessionVisitWritable  = new SessionVisitWritable(
+                SessionVisitWritable sessionVisit = new SessionVisitWritable(
                         getUrlHash(tokens),
                         getTimeStamp(tokens));
 
-                context.write(getUserIp(tokens), sessionVisitWritable);
+                context.write(getUserIp(tokens), sessionVisit);
             } catch (Exception e) {
                 // Ignoring invalid data
-                // TODO : write line to log
+                // TODO : write line to logger
             }
         }
 
